@@ -1,0 +1,14 @@
+{
+    "name": "jira-summarizer-monorepo",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "scripts": {
+        "dev:backend": "npm run start:dev --workspace=backend",
+        "dev:frontend": "npm run dev --workspace=frontend",
+        "build": "npm run build --workspaces",
+        "test": "npm run test --workspaces"
+    }
+}
