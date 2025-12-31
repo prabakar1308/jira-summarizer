@@ -74,7 +74,20 @@ export class AgentService {
                 return { tickets };
             })
             .addNode('summarize', async (state) => {
-                const model = this.getModel();
+                const preferredModel = this.configService.get<string>('PREFERRED_LLM', 'groq');
+                const hasImages = images && images.length > 0;
+
+                let model;
+                if (preferredModel === 'groq') {
+                    // Switch to a vision-capable model if images are present
+                    const modelName = hasImages ? 'meta-llama/llama-4-scout-17b-16e-instruct' : 'llama-3.3-70b-versatile';
+                    model = new ChatGroq({
+                        apiKey: this.configService.get<string>('GROQ_API_KEY') || '',
+                        model: modelName,
+                    });
+                } else {
+                    model = this.getModel();
+                }
 
                 let contextMessage = '';
                 if (state.tickets && state.tickets.length > 0) {
@@ -86,17 +99,21 @@ export class AgentService {
                     contextMessage = `(Note: No specific Jira tickets were found in the current context. If this is a general question, please answer normally. If it requires Jira data, provide a professional response explaining the current status.)\n\n`;
                 }
 
-                const content: any[] = [
-                    { type: 'text', text: `${contextMessage}USER REQUEST: ${state.query}` }
-                ];
-
-                if (images && images.length > 0) {
+                // Prepare content: Use simple string if no images to ensure compatibility
+                let humanContent: any;
+                if (hasImages) {
+                    const content: any[] = [
+                        { type: 'text', text: `${contextMessage}USER REQUEST: ${state.query}` }
+                    ];
                     images.forEach(img => {
                         content.push({
                             type: 'image_url',
                             image_url: { url: img }
                         });
                     });
+                    humanContent = content;
+                } else {
+                    humanContent = `${contextMessage}USER REQUEST: ${state.query}`;
                 }
 
                 const response = await model.invoke([
@@ -108,7 +125,7 @@ export class AgentService {
                         - **CRITICAL: Always provide ticket details in an ordered list format. NEVER use tables.**
                         - **CRITICAL: For each ticket in the list, keep it concise by including only the essential fields: Key, Summary, Status, Priority, and Assignee by default.**
                         - Maintain a premium, professional, and helpful tone.`),
-                    new HumanMessage({ content }),
+                    new HumanMessage({ content: humanContent }),
                 ]);
 
                 return { summary: response.content as string };

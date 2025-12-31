@@ -148,6 +148,21 @@ body {
   border-radius: 16px;
   border: 1px solid var(--border);
   transition: border-color 0.2s;
+  position: relative;
+  /* Added for absolute positioning of previews */
+}
+
+.attachment-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--primary);
+  color: white;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 2px solid var(--bg-card);
+  font-weight: 700;
 }
 
 .input-wrapper:focus-within {

@@ -204,19 +204,65 @@ export default function Home() {
       {/* Input Area */}
       <div className="input-area">
         <div className="input-wrapper">
-          <label style={{ cursor: 'pointer', padding: '8px', color: 'var(--text-muted)' }} title="Attach Board/Screenshot">
+          <label style={{ cursor: 'pointer', padding: '8px', color: 'var(--text-muted)', position: 'relative' }} title="Attach Board/Screenshot">
             <Upload size={20} />
+            {images.length > 0 && (
+              <span className="attachment-badge">
+                {images.length}
+              </span>
+            )}
             <input type="file" hidden onChange={handleImageUpload} accept="image/*" />
           </label>
 
           {images.length > 0 && (
-            <div style={{ position: 'absolute', bottom: '100%', left: 20, display: 'flex', gap: '8px', padding: '12px', background: 'white', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 -10px 20px rgba(0,0,0,0.05)' }}>
-              {images.map((img, i) => (
-                <div key={i} style={{ position: 'relative' }}>
-                  <img src={img} style={{ height: 40, width: 40, objectFit: 'cover', borderRadius: 4 }} />
-                  <button onClick={() => setImages(prev => prev.filter((_, idx) => idx !== i))} style={{ position: 'absolute', top: -5, right: -5, background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: 14, height: 14, fontSize: 10, cursor: 'pointer' }}>×</button>
-                </div>
-              ))}
+            <div style={{
+              position: 'absolute',
+              bottom: 'calc(100% + 15px)',
+              left: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              padding: '12px',
+              background: 'white',
+              border: '1px solid var(--border)',
+              borderRadius: '16px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              zIndex: 100,
+              minWidth: '150px'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>Attached Files</span>
+                <button onClick={() => setImages([])} style={{ fontSize: '0.7rem', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}>Clear All</button>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {images.map((img, i) => (
+                  <div key={i} style={{ position: 'relative', width: 44, height: 44 }}>
+                    <img src={img} style={{ height: '100%', width: '100%', objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)' }} />
+                    <button
+                      onClick={() => setImages(prev => prev.filter((_, idx) => idx !== i))}
+                      style={{
+                        position: 'absolute',
+                        top: -6,
+                        right: -6,
+                        background: '#ef4444',
+                        color: 'white',
+                        border: '2px solid white',
+                        borderRadius: '50%',
+                        width: 18,
+                        height: 18,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 10,
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
