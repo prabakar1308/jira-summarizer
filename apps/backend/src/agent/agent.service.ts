@@ -105,6 +105,8 @@ export class AgentService {
                         - If the user greets you or asks "who are you", respond as JiraAgent AI.
                         - If data is provided in the context, use all available fields to answer the user request accurately.
                         - Use markdown for your responses. 
+                        - **CRITICAL: Always provide ticket details in an ordered list format. NEVER use tables.**
+                        - **CRITICAL: For each ticket in the list, keep it concise by including only the essential fields: Key, Summary, Status, Priority, and Assignee by default.**
                         - Maintain a premium, professional, and helpful tone.`),
                     new HumanMessage({ content }),
                 ]);
